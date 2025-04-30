@@ -1,16 +1,19 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import Participantes from "./components/Participantes";
 import Carreras from "./components/Carreras";
+import Donaciones from "./components/Donaciones";
 import Layout from "./layout/Layout";
+import DonacionesDetalle from "./components/DonacionesDetalle";
 
 export default function App() {
   return (
     <Routes>
-      {/* Ruta de Login sin Layout */}
+      {/* Login sin Layout */}
       <Route path="/" element={<Login />} />
 
-      {/* Ruta de Dashboard con Layout */}
+      {/* Dashboard con Layout */}
       <Route
         path="/dashboard"
         element={
@@ -20,7 +23,17 @@ export default function App() {
         }
       />
 
-      {/* Ruta de Carreras con Layout */}
+      {/* Participantes con Layout */}
+      <Route
+        path="/participantes"
+        element={
+          <Layout>
+            <Participantes />
+          </Layout>
+        }
+      />
+
+      {/* Carreras con Layout */}
       <Route
         path="/carreras"
         element={
@@ -30,6 +43,26 @@ export default function App() {
         }
       />
 
+      {/* Donaciones con Layout */}
+      <Route
+        path="/donaciones"
+        element={
+          <Layout>
+            <Donaciones />
+          </Layout>
+        }
+      />
+        {/* 👇 Ruta para ver el detalle de una donación */}
+        <Route
+                path="/donaciones/:id"
+                element={
+                  <Layout>
+                    <DonacionesDetalle />
+                  </Layout>
+                }
+              />
+
+      
 
     </Routes>
   );

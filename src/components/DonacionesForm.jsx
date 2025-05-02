@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "../supabase";
 
@@ -37,11 +36,17 @@ export default function DonacionesForm() {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-8">
-      <h1 className="text-2xl font-bold mb-6 text-center">Registrar Donación</h1>
+    <div className="max-w-xl mx-auto bg-[#383854] text-white p-6 rounded-lg shadow-lg mt-8 border border-white/10">
+      <h1 className="text-2xl font-bold mb-6 text-center text-green-400">Registrar Donación</h1>
 
       {mensaje && (
-        <div className={`mb-4 p-3 rounded ${mensaje.tipo === "error" ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"}`}>
+        <div
+          className={`mb-4 p-3 rounded ${
+            mensaje.tipo === "error"
+              ? "bg-red-500/20 text-red-300 border border-red-400/20"
+              : "bg-green-500/20 text-green-300 border border-green-400/20"
+          }`}
+        >
           {mensaje.texto}
         </div>
       )}
@@ -53,7 +58,7 @@ export default function DonacionesForm() {
           placeholder="Nombre del donante"
           value={formData.nombre}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 bg-white/10 text-white border border-white/20 rounded placeholder-white/50"
           required
         />
 
@@ -63,12 +68,15 @@ export default function DonacionesForm() {
           placeholder="Monto donado (Bs)"
           value={formData.monto}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 bg-white/10 text-white border border-white/20 rounded placeholder-white/50"
           step="0.01"
           required
         />
 
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-800">
+        <button
+          type="submit"
+          className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-800 transition"
+        >
           Guardar Donación
         </button>
       </form>

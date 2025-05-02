@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../supabase"; // Ajusta la ruta si es necesario
+import { supabase } from "../supabase";
 
 export default function CarrerasForm() {
   const [formData, setFormData] = useState({
@@ -22,27 +22,23 @@ export default function CarrerasForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Intentar insertar en Supabase
-    const { data, error } = await supabase
-      .from("carreras")
-      .insert([
-        {
-          nombre: formData.nombre,
-          fecha: formData.fecha,
-          kilometros: parseFloat(formData.kilometros),
-          inicio: formData.inicio,
-          llegada: formData.llegada,
-          slogan: formData.slogan,
-          descripcion: formData.descripcion,
-        }
-      ]);
+    const { data, error } = await supabase.from("carreras").insert([
+      {
+        nombre: formData.nombre,
+        fecha: formData.fecha,
+        kilometros: parseFloat(formData.kilometros),
+        inicio: formData.inicio,
+        llegada: formData.llegada,
+        slogan: formData.slogan,
+        descripcion: formData.descripcion,
+      }
+    ]);
 
     if (error) {
       console.error("Error al registrar carrera:", error.message);
-      setMensaje({ tipo: "error", texto: "Error al registrar la carrera. Intente nuevamente." });
+      setMensaje({ tipo: "error", texto: "❌ Error al registrar la carrera. Intente nuevamente." });
     } else {
-      console.log("Carrera registrada:", data);
-      setMensaje({ tipo: "exito", texto: "Carrera registrada exitosamente." });
+      setMensaje({ tipo: "exito", texto: "✅ Carrera registrada exitosamente." });
       setFormData({
         nombre: "",
         fecha: "",
@@ -56,44 +52,43 @@ export default function CarrerasForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-8">
-      <h1 className="text-2xl font-bold mb-6 text-center">Registrar Carrera</h1>
+    <div className="max-w-3xl mx-auto bg-[#2A2A3D] text-white p-6 rounded-xl shadow-xl">
+      <h1 className="text-2xl font-bold mb-6 text-center text-green-400">Registrar Carrera</h1>
 
       {mensaje && (
-        <div className={`mb-4 p-3 rounded ${mensaje.tipo === "error" ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"}`}>
+        <div className={`mb-4 p-3 rounded text-sm font-medium ${mensaje.tipo === "error" ? "bg-red-600 text-white" : "bg-green-700 text-white"}`}>
           {mensaje.texto}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        
         <input
           type="text"
           name="nombre"
           placeholder="Nombre de la carrera"
           value={formData.nombre}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded outline-none focus:ring-2 focus:ring-green-500"
           required
         />
-        
+
         <input
           type="date"
           name="fecha"
           value={formData.fecha}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded outline-none focus:ring-2 focus:ring-green-500"
           required
         />
-        
+
         <input
           type="number"
           name="kilometros"
           placeholder="Kilómetros del recorrido"
           value={formData.kilometros}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           step="0.01"
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded outline-none focus:ring-2 focus:ring-green-500"
           required
         />
 
@@ -103,7 +98,7 @@ export default function CarrerasForm() {
           placeholder="Lugar de inicio"
           value={formData.inicio}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded"
         />
 
         <input
@@ -112,7 +107,7 @@ export default function CarrerasForm() {
           placeholder="Lugar de llegada"
           value={formData.llegada}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded"
         />
 
         <input
@@ -121,7 +116,7 @@ export default function CarrerasForm() {
           placeholder="Slogan"
           value={formData.slogan}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded"
         />
 
         <textarea
@@ -129,11 +124,14 @@ export default function CarrerasForm() {
           placeholder="Descripción de la carrera"
           value={formData.descripcion}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           rows="4"
-        ></textarea>
+          className="w-full p-3 bg-[#1F1F2E] border border-gray-600 rounded"
+        />
 
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-800">
+        <button
+          type="submit"
+          className="w-full bg-green-700 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition"
+        >
           Registrar Carrera
         </button>
       </form>

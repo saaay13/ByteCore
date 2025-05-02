@@ -26,7 +26,6 @@ export default function DonacionDetalle() {
     };
 
     fetchDonacion();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleChange = (e) => {
@@ -80,11 +79,11 @@ export default function DonacionDetalle() {
     a.click();
   };
 
-  if (!donacion) return <p className="text-center mt-10">Cargando donación...</p>;
+  if (!donacion) return <p className="text-center mt-10 text-white">Cargando donación...</p>;
 
   return (
-    <div className="max-w-2xl mx-auto p-8 mt-10 bg-white shadow-xl rounded-xl">
-      <h2 className="text-3xl font-bold text-green-700 mb-6">Detalle de la Donación</h2>
+    <div className="max-w-2xl mx-auto p-8 mt-10 bg-[#383854] text-white shadow-xl rounded-xl border border-white/10">
+      <h2 className="text-3xl font-bold text-green-400 mb-6 text-center">Detalle de la Donación</h2>
 
       {!editando ? (
         <>
@@ -99,7 +98,7 @@ export default function DonacionDetalle() {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 rounded bg-white/10 border border-white/20 text-white"
           />
           <input
             type="number"
@@ -107,7 +106,7 @@ export default function DonacionDetalle() {
             step="0.01"
             value={formData.monto}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 rounded bg-white/10 border border-white/20 text-white"
           />
           <button
             onClick={handleUpdate}
@@ -131,12 +130,14 @@ export default function DonacionDetalle() {
         >
           Exportar HTML
         </button>
-        <button
-          onClick={() => setEditando(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-800"
-        >
-          Editar
-        </button>
+        {!editando && (
+          <button
+            onClick={() => setEditando(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-800"
+          >
+            Editar
+          </button>
+        )}
         <button
           onClick={handleDelete}
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800"

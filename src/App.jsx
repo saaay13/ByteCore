@@ -6,6 +6,9 @@ import Carreras from "./components/Carreras";
 import Donaciones from "./components/Donaciones";
 import Layout from "./layout/Layout";
 import DonacionesDetalle from "./components/DonacionesDetalle";
+import Registro from "./components/Registro";
+
+
 
 export default function App() {
   return (
@@ -61,7 +64,7 @@ export default function App() {
                   </Layout>
                 }
               />
-
+        <Route path="/registro" element={<Registro />} />
       
 
     </Routes>

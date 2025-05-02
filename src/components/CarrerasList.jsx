@@ -22,24 +22,27 @@ export default function CarrerasList() {
   };
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 text-white">
       <h2 className="text-2xl font-bold mb-4 text-center">Listado de Carreras</h2>
       <div className="grid gap-4">
         {carreras.length > 0 ? (
           carreras.map((carrera) => (
-            <div key={carrera.id} className="bg-white p-4 rounded-lg shadow">
-              <h3 className="text-xl font-bold">{carrera.nombre}</h3>
+            <div
+              key={carrera.id}
+              className="bg-[#383854] p-4 rounded-lg shadow-lg border border-white/10"
+            >
+              <h3 className="text-xl font-bold text-white">{carrera.nombre}</h3>
               <p><strong>Fecha:</strong> {carrera.fecha}</p>
               <p><strong>Kilómetros:</strong> {carrera.kilometros} km</p>
               <p><strong>Inicio:</strong> {carrera.inicio}</p>
               <p><strong>Llegada:</strong> {carrera.llegada}</p>
               <p><strong>Slogan:</strong> {carrera.slogan}</p>
               <p><strong>Descripción:</strong> {carrera.descripcion}</p>
-              <p className="text-sm text-gray-500">Registrado: {new Date(carrera.created_at).toLocaleString()}</p>
+              <p className="text-sm text-gray-400">Registrado: {new Date(carrera.created_at).toLocaleString()}</p>
             </div>
           ))
         ) : (
-          <p className="text-center">No hay carreras registradas.</p>
+          <p className="text-center text-gray-300">No hay carreras registradas.</p>
         )}
       </div>
     </div>

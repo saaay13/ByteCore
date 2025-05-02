@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
 
@@ -13,7 +12,6 @@ export default function ParticipantesForm() {
   const [carreras, setCarreras] = useState([]);
   const [mensaje, setMensaje] = useState(null);
 
-  // Cargar carreras desde Supabase
   useEffect(() => {
     fetchCarreras();
   }, []);
@@ -39,7 +37,7 @@ export default function ParticipantesForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { _, error } = await supabase//_ cambio de data
+    const { _, error } = await supabase
       .from("participantes")
       .insert([
         {
@@ -52,32 +50,36 @@ export default function ParticipantesForm() {
 
     if (error) {
       console.error("Error al registrar participante:", error.message);
-      setMensaje({ tipo: "error", texto: "Error al registrar participante." });
+      setMensaje({ tipo: "error", texto: "❌ Error al registrar participante." });
     } else {
-      setMensaje({ tipo: "exito", texto: "Participante registrado correctamente." });
+      setMensaje({ tipo: "exito", texto: "✅ Participante registrado correctamente." });
       setFormData({ nombre: "", ci: "", correo: "", carrera_id: "" });
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white  p-6 rounded-lg shadow-lg mt-8">
-      <h1 className="text-2xl font-bold  mb-6 text-center">Registrar Participante</h1>
+    <div className="max-w-2xl mx-auto bg-[#1F1D2B] p-6 rounded-xl shadow-lg">
+      <h2 className="text-xl font-bold text-[#22c55e] mb-4 text-center">Registrar Participante</h2>
 
       {mensaje && (
-        <div className={`mb-4 p-3 rounded ${mensaje.tipo === "error" ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"}`}>
+        <div
+          className={`mb-4 p-3 rounded text-sm font-medium ${
+            mensaje.tipo === "error" ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400"
+          }`}
+        >
           {mensaje.texto}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 text-gray-200">
         <input
           type="text"
           name="nombre"
           placeholder="Nombre completo"
           value={formData.nombre}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           required
+          className="w-full p-3 rounded-lg bg-[#2D2B3A] border border-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#22c55e]"
         />
 
         <input
@@ -86,8 +88,8 @@ export default function ParticipantesForm() {
           placeholder="Cédula de Identidad"
           value={formData.ci}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           required
+          className="w-full p-3 rounded-lg bg-[#2D2B3A] border border-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#22c55e]"
         />
 
         <input
@@ -96,15 +98,15 @@ export default function ParticipantesForm() {
           placeholder="Correo electrónico (opcional)"
           value={formData.correo}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 rounded-lg bg-[#2D2B3A] border border-gray-700 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#22c55e]"
         />
 
         <select
           name="carrera_id"
           value={formData.carrera_id}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
           required
+          className="w-full p-3 rounded-lg bg-[#2D2B3A] border border-gray-700 text-gray-300 outline-none focus:ring-2 focus:ring-[#22c55e]"
         >
           <option value="">-- Selecciona una carrera --</option>
           {carreras.map((carrera) => (
@@ -114,7 +116,10 @@ export default function ParticipantesForm() {
           ))}
         </select>
 
-        <button type="submit" className="w-full bg-green-900 text-white p-2 rounded hover:bg-green-800">
+        <button
+          type="submit"
+          className="w-full py-3 bg-[#22c55e] hover:bg-[#16a34a] text-white font-semibold rounded-lg transition duration-300"
+        >
           Registrar Participante
         </button>
       </form>

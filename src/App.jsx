@@ -7,8 +7,7 @@ import Donaciones from "./components/Donaciones";
 import Layout from "./layout/Layout";
 import DonacionesDetalle from "./components/DonacionesDetalle";
 import Registro from "./components/Registro";
-
-
+import AgregarProducto from "./components/AgregarProducto";
 
 export default function App() {
   return (
@@ -55,18 +54,28 @@ export default function App() {
           </Layout>
         }
       />
-        {/* 👇 Ruta para ver el detalle de una donación */}
-        <Route
-                path="/donaciones/:id"
-                element={
-                  <Layout>
-                    <DonacionesDetalle />
-                  </Layout>
-                }
-              />
-        <Route path="/registro" element={<Registro />} />
-      
+      {/* 👇 Detalle de Donación */}
+      <Route
+        path="/donaciones/:id"
+        element={
+          <Layout>
+            <DonacionesDetalle />
+          </Layout>
+        }
+      />
 
+      {/* Registro sin Layout */}
+      <Route path="/registro" element={<Registro />} />
+
+      {/* Agregar Producto con Layout */}
+      <Route
+        path="/agregar"
+        element={
+          <Layout>
+            <AgregarProducto />
+          </Layout>
+        }
+      />
     </Routes>
   );
 }

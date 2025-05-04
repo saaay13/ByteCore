@@ -1,13 +1,13 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
-import Participantes from "./components/Participantes";
-import Carreras from "./components/Carreras";
-import Donaciones from "./components/Donaciones";
+import Info from "./components/Info";
 import Layout from "./layout/Layout";
-import DonacionesDetalle from "./components/DonacionesDetalle";
 import Registro from "./components/Registro";
 import AgregarProducto from "./components/AgregarProducto";
+import ProductosList from "./components/ProductosList";
+import CategoriaMenu from "./components/CategoriaMenu";
+import ProductosDetalle from "./components/ProductosDetalle";
 
 export default function App() {
   return (
@@ -25,44 +25,39 @@ export default function App() {
         }
       />
 
-      {/* Participantes con Layout */}
+      {/* Info con Layout */}
       <Route
-        path="/participantes"
+        path="/info"
         element={
           <Layout>
-            <Participantes />
+            <Info />
           </Layout>
         }
       />
 
-      {/* Carreras con Layout */}
-      <Route
-        path="/carreras"
-        element={
-          <Layout>
-            <Carreras />
-          </Layout>
-        }
-      />
+      {/* Carreras con Categorias */}
+      <Route path="/categorias" element={<Layout><CategoriaMenu /></Layout>} />
 
-      {/* Donaciones con Layout */}
+
+      {/* Donaciones con List*/}
       <Route
-        path="/donaciones"
+        path="/productoslist"
         element={
           <Layout>
-            <Donaciones />
+            <ProductosList />
           </Layout>
         }
       />
       {/* 👇 Detalle de Donación */}
-      <Route
-        path="/donaciones/:id"
-        element={
-          <Layout>
-            <DonacionesDetalle />
-          </Layout>
-        }
-      />
+        <Route
+          path="/producto/:id"
+          element={
+            <Layout>
+              <ProductosDetalle />
+            </Layout>
+          }
+        />
+
 
       {/* Registro sin Layout */}
       <Route path="/registro" element={<Registro />} />

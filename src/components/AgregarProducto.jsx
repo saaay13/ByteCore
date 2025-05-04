@@ -9,6 +9,7 @@ export default function AgregarProducto() {
     stock: "",
     categoria: "",
     imagen_url: "",
+    imagen2_url: "", // Nuevo campo
   });
 
   const [mensaje, setMensaje] = useState("");
@@ -34,6 +35,7 @@ export default function AgregarProducto() {
         stock: "",
         categoria: "",
         imagen_url: "",
+        imagen2_url: "", // Limpiar campo
       });
     }
   };
@@ -43,14 +45,14 @@ export default function AgregarProducto() {
       <form onSubmit={handleSubmit} className="bg-[#2D2B3A] p-8 rounded-lg shadow-lg w-full max-w-xl space-y-4">
         <h2 className="text-2xl font-bold text-white text-center">Agregar Nuevo Producto</h2>
 
-        {["nombre", "descripcion", "precio", "stock", "categoria", "imagen_url"].map((campo) => (
+        {["nombre", "descripcion", "precio", "stock", "categoria", "imagen_url", "imagen2_url"].map((campo) => (
           <input
             key={campo}
             type={campo === "precio" || campo === "stock" ? "number" : "text"}
             name={campo}
             value={formulario[campo]}
             onChange={handleChange}
-            placeholder={campo.charAt(0).toUpperCase() + campo.slice(1)}
+            placeholder={campo.charAt(0).toUpperCase() + campo.slice(1).replace("_", " ")}
             className="w-full p-2 bg-[#1F1D2B] border border-gray-600 rounded text-white"
             required={campo !== "descripcion"}
             step={campo === "precio" ? "0.01" : undefined}

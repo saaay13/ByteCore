@@ -36,27 +36,25 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#1F1D2B] text-gray-300 p-6 flex flex-col items-center">
       {/* Bienvenida */}
-      <div className="bg-[#2D2B3A] shadow-xl rounded-2xl p-10 w-full max-w-3xl text-center border border-gray-700">
-        <FiSmile className="text-[#22c55e] text-6xl mb-4 animate-bounce" />
-        <h1 className="text-4xl font-extrabold text-white mb-4">
-          ¡Bienvenido al ByteCore!
-        </h1>
-        <p className="text-gray-400 text-lg">
-          Has iniciado sesión correctamente. Aquí puedes ver productos por categoría y acceder a otras funcionalidades.
-        </p>
-      </div>
+        <div
+          className="relative w-full max-w-5xl rounded-xl overflow-hidden shadow-lg border border-gray-700"
+          style={{
+            backgroundImage: "url('/img/fondo.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/20"></div>
 
-      {/* Botón solo para el usuario autorizado */}
-      {usuario?.email === "77875506s@gmail.com" && (
-        <div className="mt-8 mb-4 flex justify-center">
-          <Link
-            to="/agregar"
-            className="bg-[#22c55e] text-white px-6 py-2 rounded-lg hover:bg-green-600 transition"
-          >
-            ➕ Agregar Producto
-          </Link>
+          <div className="relative z-10 p-20 text-center">
+            <FiSmile className="text-[#22c55e] text-6xl mb-6 animate-bounce" />
+            <h1 className="text-5xl font-bold text-gray-100 mb-4">¡Bienvenido a ByteCore!</h1>
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
+              Has iniciado sesión correctamente. Explora los productos disponibles organizados por categoría y accede a todas las funcionalidades de la plataforma.
+            </p>
+          </div>
         </div>
-      )}
+
 
       {/* Mostrar productos por categoría */}
       <div className="mt-16 w-full px-4 space-y-20">

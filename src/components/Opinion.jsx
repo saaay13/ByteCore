@@ -10,34 +10,37 @@ export default function Opiniones({ productoNombre, productoId }) {
   const [usuarioCorreo, setUsuarioCorreo] = useState("");
   const textareaRef = useRef(null);
 
+  // Obtener email del usuario logueado
   useEffect(() => {
     const obtenerUsuario = async () => {
       const { data: { user }, error } = await supabase.auth.getUser();
-      if (user) setUsuarioCorreo(user.email);
+      if (user) {
+        setUsuarioCorreo(user.email);
+      }
     };
     obtenerUsuario();
   }, []);
 
-  // Obtener opiniones con el correo del usuario que las escribió
+  // Obtener opiniones del producto
   useEffect(() => {
     const fetchOpiniones = async () => {
       const { data, error } = await supabase
         .from("opiniones")
-        .select("comentario, calificacion, creado_en, perfil:perfil_id (email)")
-        .eq("producto_id", productoId)
-        .order("creado_en", { ascending: false });  // Ordenar por fecha de creación, descendente
-
+        .select("comentario, calificacion, creado_en")  // Seleccionamos solo comentario, calificación y fecha de creación
+        .eq("producto_id", productoId)  // Filtramos por producto_id
+        .order("creado_en", { ascending: false });  // Ordenamos las opiniones de más recientes a más antiguas
+    
       if (error) {
         console.error("Error al obtener opiniones:", error.message);
       } else {
-        setOpiniones(data);
+        setOpiniones(data);  // Actualizamos el estado con las opiniones
       }
     };
 
     fetchOpiniones();
   }, [productoId]);
 
-  // Ajustar altura del textarea al escribir
+  // Expandir textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -45,17 +48,14 @@ export default function Opiniones({ productoNombre, productoId }) {
     }
   }, [comentario]);
 
+  // Guardar opinión
   const handleGuardarOpinion = async () => {
     if (!comentario.trim()) {
       setMensaje("Por favor, ingresa un comentario.");
       return;
     }
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       setMensaje("Por favor, inicia sesión para dejar una opinión.");
       return;
@@ -63,24 +63,22 @@ export default function Opiniones({ productoNombre, productoId }) {
 
     setIsSubmitting(true);
 
-    const perfil_id = user.id;
-
     const { data: perfil, error: perfilError } = await supabase
       .from("perfiles")
       .select("id")
-      .eq("id", perfil_id)
+      .eq("user_id", user.id)
       .single();
 
     if (perfilError) {
-      setMensaje("No se encontró el perfil del usuario. ¿Estás registrado?");
+      setMensaje("No se encontró el perfil del usuario.");
       setIsSubmitting(false);
       return;
     }
 
-    const { data, error } = await supabase.from("opiniones").insert([
+    const { error } = await supabase.from("opiniones").insert([
       {
         producto_id: productoId,
-        perfil_id,
+        perfil_id: perfil.id,
         comentario,
         calificacion,
       },
@@ -92,15 +90,14 @@ export default function Opiniones({ productoNombre, productoId }) {
       setMensaje("¡Tu opinión ha sido enviada con éxito!");
       setComentario("");
       setCalificacion(5);
-      setOpiniones([
-        ...opiniones,
-        {
-          comentario,
-          calificacion,
-          perfil_id,
-          creado_en: new Date().toISOString(),
-        },
-      ]);
+      // Recargar opiniones
+      const { data: nuevasOpiniones } = await supabase
+        .from("opiniones")
+        .select("comentario, calificacion, creado_en")  // Seleccionamos solo comentario, calificación y fecha de creación
+        .eq("producto_id", productoId)
+        .order("creado_en", { ascending: false });
+
+      setOpiniones(nuevasOpiniones || []);
     }
 
     setIsSubmitting(false);
@@ -176,11 +173,6 @@ export default function Opiniones({ productoNombre, productoId }) {
               <p className="text-sm text-gray-400">
                 {new Date(opinion.creado_en).toLocaleDateString()}
               </p>
-              {opinion.perfil?.email && (
-                <p className="text-sm text-gray-500 italic">
-                  Publicado por: {opinion.perfil.email}
-                </p>
-              )}
             </div>
           ))
         )}

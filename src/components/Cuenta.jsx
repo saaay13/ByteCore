@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "../supabase"; // Asegúrate de importar tu instancia de Supabase
 import { useNavigate } from "react-router-dom";
-import { FiLogOut, FiUser } from "react-icons/fi";
+import { FiLogOut, FiUser, FiPhone, FiHome, FiCalendar } from "react-icons/fi";
 
 export default function Cuenta() {
   const [perfil, setPerfil] = useState(null); // Estado para almacenar la información del perfil
+  const [loading, setLoading] = useState(true); // Para mostrar carga mientras se obtienen los datos
+  const [error, setError] = useState(null); // Estado para manejar errores
   const navigate = useNavigate(); // Hook para navegación
 
   useEffect(() => {
@@ -14,18 +16,21 @@ export default function Cuenta() {
 
       if (session?.session?.user) {
         // Si el usuario está autenticado, obtenemos los detalles del perfil
-        const { data: user, error } = await supabase
+        const { data, error } = await supabase
           .from("perfiles")
           .select("*")
-          .eq("id", session.session.user.id) // Filtramos por el ID del usuario
+          .eq("user_id", session.session.user.id) // Filtramos por el ID del usuario
           .single(); // Esperamos solo un resultado
 
         if (error) {
           console.error("Error al cargar el perfil:", error); // Manejo de errores
+          setError("No se pudieron cargar los datos del perfil.");
         } else {
-          setPerfil(user); // Almacenamos los datos del perfil en el estado
+          setPerfil(data); // Almacenamos los datos del perfil en el estado
         }
       }
+
+      setLoading(false); // Se ha terminado de cargar
     };
 
     fetchPerfil(); // Llamada para obtener los detalles del perfil cuando se monta el componente
@@ -37,8 +42,18 @@ export default function Cuenta() {
   };
 
   // Si el perfil aún no se ha cargado, mostramos un mensaje de carga
-  if (!perfil) {
+  if (loading) {
     return <div className="text-white p-6">Cargando perfil...</div>;
+  }
+
+  // Si ocurrió un error al cargar el perfil, lo mostramos
+  if (error) {
+    return <div className="text-white p-6">{error}</div>;
+  }
+
+  // Si no se encontró perfil, mostramos un mensaje
+  if (!perfil) {
+    return <div className="text-white p-6">No se encontraron datos del perfil.</div>;
   }
 
   return (
@@ -57,8 +72,12 @@ export default function Cuenta() {
 
         {/* Detalles del perfil */}
         <div className="space-y-2">
-          <p><strong>Rol:</strong> {perfil.rol}</p>
-          <p><strong>Creado en:</strong> {new Date(perfil.creado_en).toLocaleString()}</p>
+          <p><strong>Nombre completo:</strong> {perfil.nombre} {perfil.apellido}</p>
+          <p><strong>Correo:</strong> {perfil.email}</p>
+          <p><strong>Dirección:</strong> {perfil.direccion || "No disponible"}</p>
+          <p><strong>Teléfono:</strong> {perfil.telefono || "No disponible"}</p>
+          <p><strong>Fecha de nacimiento:</strong> {perfil.fecha_nacimiento ? new Date(perfil.fecha_nacimiento).toLocaleDateString() : "No disponible"}</p>
+          <p><strong>Creado en:</strong> {new Date(perfil.created_at).toLocaleString()}</p>
         </div>
 
         {/* Botón para cerrar sesión */}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../supabase';  // Asegúrate de importar tu instancia de Supabase
 import { FiMail, FiLock, FiUser } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,17 +19,61 @@ export default function Registro() {
     setSuccess(null);
     setLoading(true);
 
-    setTimeout(() => {
-      setSuccess('¡Cuenta creada! J');
+    // Paso 1: Crear cuenta en Supabase Auth
+    const { user, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (signUpError) {
       setLoading(false);
-    }, 1000);
+      setError(signUpError.message);
+      return;
+    }
+
+    // Verificar que el usuario está autenticado
+    if (!user) {
+      setLoading(false);
+      setError('No se pudo obtener el ID del usuario. Revisa tu correo y confirma tu cuenta.');
+      return;
+    }
+
+    // Paso 2: Obtener el ID del usuario
+    const userId = user.id;
+
+    // Paso 3: Insertar datos adicionales en la tabla "perfiles"
+    const { data, error: insertError } = await supabase
+      .from('perfiles')
+      .insert([
+        {
+          user_id: userId,  
+          nombre: fullName,  
+          apellido: username, 
+          email: email,  
+          direccion: '',  
+          telefono: '', 
+          fecha_nacimiento: null, 
+        },
+      ]);
+
+    if (insertError) {
+      setLoading(false);
+      setError(insertError.message);
+    } else {
+      setSuccess('¡Cuenta creada! Revisa tu correo para confirmar.');
+      navigate('/');
+    }
+
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-[#1F1D2B] flex items-center justify-center px-4">
       <div className="bg-[#2D2B3A] px-10 py-12 rounded-xl shadow-xl w-full max-w-md border border-gray-700">
         <h1 className="text-3xl font-extrabold text-center text-white mb-8">Crear Cuenta</h1>
+
         <form onSubmit={handleRegister} className="space-y-6">
+          {/* Campo nombre completo */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Nombre completo</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -44,6 +89,7 @@ export default function Registro() {
             </div>
           </div>
 
+          {/* Campo usuario */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Nombre de usuario</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -59,6 +105,7 @@ export default function Registro() {
             </div>
           </div>
 
+          {/* Correo */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Correo electrónico</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -74,6 +121,7 @@ export default function Registro() {
             </div>
           </div>
 
+          {/* Contraseña */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Contraseña</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -89,6 +137,7 @@ export default function Registro() {
             </div>
           </div>
 
+          {/* Botón registrar */}
           <button
             type="submit"
             disabled={loading}

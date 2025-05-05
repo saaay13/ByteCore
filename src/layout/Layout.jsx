@@ -7,6 +7,7 @@ import { supabase } from "../supabase";
 export default function Layout({ children }) {
   const [userInitial, setUserInitial] = useState(null);
 
+  // Preparando entorno: Obtener datos del usuario con el hook useEffect (Hooks)
   useEffect(() => {
     const fetchUserData = async () => {
       const { data: session } = await supabase.auth.getSession();
@@ -25,15 +26,16 @@ export default function Layout({ children }) {
       }
     };
     fetchUserData();
-  }, []);
+  }, []); // Hooks: Uso de useEffect para obtener la información del usuario
 
   return (
     <div className="flex flex-col min-h-screen bg-[#1F1D2B] text-white">
-      {/* Header */}
+      {/* Componentes: Header con renderizado condicional del usuario */}
       <header className="bg-[#2D2B3A] p-4 shadow">
         <div className="flex justify-between items-center mb-4">
           <div className="text-2xl font-bold text-[#22c55e]">ByteCore</div>
 
+          {/* Renderizado Condicional: Mostrar inicial del usuario o ícono de usuario */}
           <div className="flex gap-5 text-xl text-gray-300 items-center">
             <Link
               to="/micuenta"
@@ -48,7 +50,7 @@ export default function Layout({ children }) {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navegación: Enlaces principales de la aplicación */}
         <nav className="flex justify-end gap-8 text-gray-300 font-medium text-sm sm:text-base">
           <Link to="/dashboard" className="hover:text-[#22c55e] transition-colors">Inicio</Link>
           <Link to="/categorias" className="hover:text-[#22c55e] transition-colors">Categorías</Link>
@@ -56,16 +58,16 @@ export default function Layout({ children }) {
         </nav>
       </header>
 
-      {/* Main Content */}
+      {/* Renderizado de contenido principal: Área principal de la página */}
       <main className="flex-grow p-6 bg-gradient-to-b from-[#1F1D2B] to-[#2D2B3A]">
-        {children}
+        {children} {/* Props: Renderización de los componentes hijos */}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#2D2B3A] text-gray-300 py-10 px-6">
+      {/* Footer: Componente con enlaces útiles y redes sociales */}
+      <footer className="bg-[#2D2B3A] text-gray-300 py-10 px-6 mt-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
 
-          {/* Company Info */}
+          {/* Información de la compañía: Descripción breve de ByteCore */}
           <div>
             <h2 className="text-2xl font-bold text-[#22c55e] mb-4">ByteCore</h2>
             <p className="text-sm leading-relaxed">
@@ -73,7 +75,7 @@ export default function Layout({ children }) {
             </p>
           </div>
 
-          {/* Enlaces útiles */}
+          {/* Listas: Enlaces útiles en el footer */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">Enlaces útiles</h3>
             <ul className="space-y-1 text-sm">
@@ -85,7 +87,7 @@ export default function Layout({ children }) {
             </ul>
           </div>
 
-          {/* Soporte */}
+          {/* Soporte: Información de contacto */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">Soporte</h3>
             <ul className="space-y-1 text-sm">
@@ -94,7 +96,7 @@ export default function Layout({ children }) {
             </ul>
           </div>
 
-          {/* Redes sociales */}
+          {/* Redes Sociales: Iconos con enlaces a las redes */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">Síguenos</h3>
             <div className="flex space-x-4 text-2xl">
@@ -107,10 +109,11 @@ export default function Layout({ children }) {
           </div>
         </div>
 
+        {/* Footer: Información de derechos de autor */}
         <div className="mt-8 border-t border-gray-700 pt-4 text-sm text-center text-gray-500">
           &copy; {new Date().getFullYear()} ByteCore. Todos los derechos reservados.
         </div>
       </footer>
     </div>
   );
-} 
+}

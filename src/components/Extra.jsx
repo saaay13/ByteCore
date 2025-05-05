@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const Extra = () => {
   const [activeSection, setActiveSection] = useState(null);
 
+  // Función para alternar la visibilidad de las secciones
   const toggleSection = (index) => {
     if (activeSection === index) {
       setActiveSection(null); // Colapsar la sección si está abierta
@@ -108,6 +109,7 @@ const Extra = () => {
           </div>
         </div>
 
+        {/* Enlace al inicio */}
         <div className="mt-12 text-center">
           <Link to="/" className="text-[#22c55e] text-lg hover:underline transition-all duration-300">Volver al inicio</Link>
         </div>

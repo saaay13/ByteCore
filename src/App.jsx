@@ -13,6 +13,7 @@ import Carrito from "./components/Carrito";
 import Gracias from "./components/Gracias";
 import ComprasDetalle from "./components/ComprasDetalle";
 import Extra from "./components/Extra";
+import Factura from "./components/Factura";
 
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/" element={<Login />} />
       <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
       <Route path="/info" element={<Layout><Info /></Layout>} />
+      <Route path="/factura/:id" element={<Factura />} />
       <Route path="/categorias" element={<Layout><CategoriaMenu /></Layout>} />
       <Route path="/productoslist" element={<Layout><ProductosList /></Layout>} />
       <Route path="/producto/:id" element={<Layout><ProductosDetalle /></Layout>} />

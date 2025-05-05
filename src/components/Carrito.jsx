@@ -90,7 +90,6 @@ const Carrito = () => {
           ))}
         </ul>
 
-        {/* Botón para cerrar el menú (ubicado al final) */}
         <button
           onClick={() => setShowMenu(false)} // Cerrar menú al hacer clic
           className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white p-2 rounded-full hover:bg-gray-700"

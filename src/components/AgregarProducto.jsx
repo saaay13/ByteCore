@@ -9,7 +9,7 @@ export default function AgregarProducto() {
     stock: "",
     categoria: "",
     imagen_url: "",
-    imagen2_url: "", // Nuevo campo
+    imagen2_url: "", 
   });
 
   const [mensaje, setMensaje] = useState("");
@@ -35,7 +35,7 @@ export default function AgregarProducto() {
         stock: "",
         categoria: "",
         imagen_url: "",
-        imagen2_url: "", // Limpiar campo
+        imagen2_url: "", 
       });
     }
   };

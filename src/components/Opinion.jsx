@@ -10,7 +10,6 @@ export default function Opiniones({ productoNombre, productoId }) {
   const [usuarioCorreo, setUsuarioCorreo] = useState("");
   const textareaRef = useRef(null);
 
-  // Obtener usuario autenticado
   useEffect(() => {
     const obtenerUsuario = async () => {
       const { data: { user }, error } = await supabase.auth.getUser();

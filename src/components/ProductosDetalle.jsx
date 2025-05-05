@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { supabase } from "../supabase"; // Asegúrate de que esta ruta sea correcta
-import Opiniones from "./Opinion"; // Asegúrate de que la ruta sea correcta
+import { useParams, Link } from "react-router-dom";
+import { supabase } from "../supabase";
+import Opiniones from "./Opinion";
+import { FiArrowRight } from "react-icons/fi";
 
 export default function ProductoDetalle() {
-  const { id } = useParams(); // Obtienes el ID del producto desde la URL
+  const { id } = useParams();
   const [producto, setProducto] = useState(null);
   const [cantidad, setCantidad] = useState(1);
   const [relacionados, setRelacionados] = useState([]);
+  const [cantidadesRelacionadas, setCantidadesRelacionadas] = useState({});
+  const [mensajeAgregado, setMensajeAgregado] = useState(false); // ✅ nuevo estado
 
   useEffect(() => {
     const fetchProducto = async () => {
@@ -32,7 +35,7 @@ export default function ProductoDetalle() {
       if (producto?.categoria) {
         const { data, error } = await supabase
           .from("productos")
-          .select("id, nombre, imagen_url")
+          .select("id, nombre, imagen_url, precio, stock")
           .eq("categoria", producto.categoria)
           .neq("id", producto.id)
           .limit(4);
@@ -41,17 +44,17 @@ export default function ProductoDetalle() {
           console.error("Error al obtener productos relacionados:", error.message);
         } else {
           setRelacionados(data);
+          const cantidadesIniciales = data.reduce((acc, item) => {
+            acc[item.id] = 1;
+            return acc;
+          }, {});
+          setCantidadesRelacionadas(cantidadesIniciales);
         }
       }
     };
 
     fetchRelacionados();
   }, [producto]);
-
-  const handleCantidadChange = (e) => {
-    const val = Math.max(1, Math.min(producto.stock, parseInt(e.target.value) || 1));
-    setCantidad(val);
-  };
 
   const agregarAlCarrito = () => {
     const item = {
@@ -60,9 +63,24 @@ export default function ProductoDetalle() {
       precio: producto.precio,
       cantidad,
       total: (producto.precio * cantidad).toFixed(2),
+      stock: producto.stock,
+      imagen_url: producto.imagen_url,
     };
-    console.log("Agregado al carrito:", item);
-    alert("Producto agregado al carrito.");
+
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const index = carrito.findIndex((item) => item.id === producto.id);
+
+    if (index !== -1) {
+      carrito[index].cantidad += cantidad;
+    } else {
+      carrito.push(item);
+    }
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+
+    // ✅ Mostrar mensaje temporal
+    setMensajeAgregado(true);
+    setTimeout(() => setMensajeAgregado(false), 2500);
   };
 
   if (!producto) {
@@ -81,8 +99,15 @@ export default function ProductoDetalle() {
             {producto.imagen_url && (
               <img
                 src={producto.imagen_url}
-                alt={`${producto.nombre} - Imagen principal`}
-                className="w-full rounded-lg shadow-lg object-cover"
+                alt={`${producto.nombre}`}
+                className="w-full rounded-lg shadow-xl object-cover"
+              />
+            )}
+            {producto.imagen2_url && (
+              <img
+                src={producto.imagen2_url}
+                alt={`${producto.nombre} secundaria`}
+                className="w-full mt-4 rounded-lg shadow-xl object-cover"
               />
             )}
           </div>
@@ -90,24 +115,11 @@ export default function ProductoDetalle() {
           <div className="flex-1 space-y-4">
             <p className="text-xl">
               <span className="font-semibold text-gray-400">Precio unitario: </span>
-              <span className="text-green-400 font-bold text-2xl">
-                ${producto.precio}
-              </span>
+              <span className="text-green-400 font-bold text-2xl">${producto.precio}</span>
             </p>
-
-            <p className="text-lg">
-              <span className="font-semibold text-gray-400">Stock disponible: </span>
-              {producto.stock}
-            </p>
-
-            <p className="text-lg">
-              <span className="font-semibold text-gray-400">Categoría: </span>
-              {producto.categoria || "Sin categoría"}
-            </p>
-
-            <p className="text-lg text-gray-300 whitespace-pre-wrap">
-              {producto.descripcion || "Sin descripción disponible."}
-            </p>
+            <p className="text-lg text-gray-400">Stock disponible: {producto.stock}</p>
+            <p className="text-lg text-gray-400">Categoría: {producto.categoria}</p>
+            <p className="text-lg text-gray-300 whitespace-pre-wrap">{producto.descripcion}</p>
 
             <div className="mt-6 space-y-4">
               <div className="flex items-center gap-3">
@@ -118,7 +130,9 @@ export default function ProductoDetalle() {
                   min="1"
                   max={producto.stock}
                   value={cantidad}
-                  onChange={handleCantidadChange}
+                  onChange={(e) =>
+                    setCantidad(Math.max(1, Math.min(producto.stock, parseInt(e.target.value) || 1)))
+                  }
                   className="w-20 p-1 rounded bg-gray-800 border border-gray-600 text-center"
                 />
               </div>
@@ -138,39 +152,50 @@ export default function ProductoDetalle() {
               >
                 Agregar al carrito
               </button>
+
+              {/* ✅ Mostrar mensaje temporal debajo del botón */}
+              {mensajeAgregado && (
+                <p className="text-green-400 mt-2 animate-fade-in">
+                  Producto agregado al carrito.
+                </p>
+              )}
             </div>
           </div>
         </div>
       </div>
 
+      {/* Relacionados */}
       <div className="md:col-span-1 space-y-4">
-        <h3 className="text-2xl font-semibold text-[#22c55e] border-b border-gray-700 pb-2">
-          Relacionados
-        </h3>
+        <h3 className="text-2xl font-semibold text-[#22c55e] border-b border-gray-700 pb-2">Relacionados</h3>
         {relacionados.length === 0 ? (
           <p className="text-gray-400 text-sm">No hay productos relacionados.</p>
         ) : (
           relacionados.map((rel) => (
-            <div key={rel.id} className="block bg-gray-800 rounded-lg overflow-hidden">
+            <Link
+              key={rel.id}
+              to={`/producto/${rel.id}`}
+              className="flex items-center gap-5 p-4 border border-gray-700 rounded-md hover:translate-x-1 transition-transform duration-200"
+            >
               {rel.imagen_url && (
                 <img
                   src={rel.imagen_url}
                   alt={rel.nombre}
-                  className="w-full h-32 object-cover"
+                  className="w-20 h-20 object-cover rounded-md border border-gray-600"
                 />
               )}
-              <div className="p-2">
-                <p className="text-white font-medium truncate">{rel.nombre}</p>
+              <div>
+                <p className="text-white font-semibold">{rel.nombre}</p>
+                <p className="text-gray-400 text-sm">${rel.precio?.toFixed(2)}</p>
               </div>
-            </div>
+              <FiArrowRight className="text-gray-500 text-xl" />
+            </Link>
           ))
         )}
       </div>
 
-      <div className="md:col-span-1 mt-8">
-        <h3 className="text-2xl font-semibold text-[#22c55e] border-b border-gray-700 pb-2">
-          Opiniones
-        </h3>
+      {/* Opiniones */}
+      <div className="md:col-span-4">
+        <h3 className="text-2xl font-semibold text-[#22c55e] border-b border-gray-700 pb-2">Opiniones</h3>
         <Opiniones productoId={producto.id} productoNombre={producto.nombre} />
       </div>
     </div>

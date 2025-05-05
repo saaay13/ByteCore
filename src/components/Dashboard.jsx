@@ -36,25 +36,36 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#1F1D2B] text-gray-300 p-6 flex flex-col items-center">
       {/* Bienvenida */}
-        <div
-          className="relative w-full max-w-5xl rounded-xl overflow-hidden shadow-lg border border-gray-700"
-          style={{
-            backgroundImage: "url('/img/fondo.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="absolute inset-0 bg-black/20"></div>
+      <div
+        className="relative w-full max-w-5xl rounded-xl overflow-hidden shadow-lg border border-gray-700"
+        style={{
+          backgroundImage: "url('/img/fondo.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/20"></div>
 
-          <div className="relative z-10 p-20 text-center">
-            <FiSmile className="text-[#22c55e] text-6xl mb-6 animate-bounce" />
-            <h1 className="text-5xl font-bold text-gray-100 mb-4">¡Bienvenido a ByteCore!</h1>
-            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
-              Has iniciado sesión correctamente. Explora los productos disponibles organizados por categoría y accede a todas las funcionalidades de la plataforma.
-            </p>
-          </div>
+        <div className="relative z-10 p-20 text-center">
+          <FiSmile className="text-[#22c55e] text-6xl mb-6 animate-bounce" />
+          <h1 className="text-5xl font-bold text-gray-100 mb-4">¡Bienvenido a ByteCore!</h1>
+          <p className="text-lg text-gray-200 max-w-2xl mx-auto">
+            Has iniciado sesión correctamente. Explora los productos disponibles organizados por categoría y accede a todas las funcionalidades de la plataforma.
+          </p>
         </div>
+      </div>
 
+      {/* Botón Agregar Producto (solo para el correo específico) */}
+      {usuario?.email === "77875506s@gmail.com" && (
+        <div className="mt-8 text-center">
+          <Link
+            to="/agregar"
+            className="inline-block bg-[#22c55e] text-white font-bold py-2 px-6 rounded-full hover:bg-green-600 transition"
+          >
+            Agregar Producto
+          </Link>
+        </div>
+      )}
 
       {/* Mostrar productos por categoría */}
       <div className="mt-16 w-full px-4 space-y-20">

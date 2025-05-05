@@ -1,21 +1,46 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FiUser, FiShoppingCart } from "react-icons/fi";
+import { FiShoppingCart, FiUser, FiFacebook, FiTwitter, FiInstagram, FiMail } from "react-icons/fi";
+import { FaLinkedin } from "react-icons/fa";
+import { supabase } from "../supabase";
 
 export default function Layout({ children }) {
+  const [userInitial, setUserInitial] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const { data: session } = await supabase.auth.getSession();
+      if (session?.session?.user) {
+        const userId = session.session.user.id;
+        const { data: userProfile, error } = await supabase
+          .from("perfiles")
+          .select("nombre")
+          .eq("id", userId)
+          .single();
+
+        if (!error && userProfile?.nombre) {
+          const initial = userProfile.nombre.charAt(0).toUpperCase();
+          setUserInitial(initial);
+        }
+      }
+    };
+    fetchUserData();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-[#1F1D2B] text-white">
+      {/* Header */}
       <header className="bg-[#2D2B3A] p-4 shadow">
-        {/* Primer nivel: Logo a la izquierda y iconos a la derecha */}
         <div className="flex justify-between items-center mb-4">
-          {/* Logo a la izquierda */}
-          <div className="flex items-center gap-6">
-            <div className="text-2xl font-bold text-[#22c55e]">ByteCore</div>
-          </div>
+          <div className="text-2xl font-bold text-[#22c55e]">ByteCore</div>
 
-          {/* Iconos a la derecha */}
-          <div className="flex gap-5 text-xl text-gray-300">
-            <Link to="/micuenta" className="hover:text-[#22c55e]" title="Mi Cuenta">
-              <FiUser />
+          <div className="flex gap-5 text-xl text-gray-300 items-center">
+            <Link
+              to="/micuenta"
+              className="hover:text-[#22c55e] flex items-center justify-center w-8 h-8 rounded-full bg-[#22c55e] text-white"
+              title="Mi Cuenta"
+            >
+              {userInitial || <FiUser />}
             </Link>
             <Link to="/carrito" className="hover:text-[#22c55e]" title="Carrito">
               <FiShoppingCart />
@@ -23,76 +48,69 @@ export default function Layout({ children }) {
           </div>
         </div>
 
-        {/* Segundo nivel: Menú de navegación a la derecha */}
+        {/* Navigation */}
         <nav className="flex justify-end gap-8 text-gray-300 font-medium text-sm sm:text-base">
-          <Link
-            to="/dashboard"
-            className="hover:text-[#22c55e] transition-colors"
-          >
-            Inicio
-          </Link>
-          <Link
-            to="/categorias"
-            className="hover:text-[#22c55e] transition-colors"
-          >
-            Categorias
-          </Link>
-          <Link
-            to="/info"
-            className="hover:text-[ #22c55e] transition-colors"
-          >
-            Contacto
-          </Link>
+          <Link to="/dashboard" className="hover:text-[#22c55e] transition-colors">Inicio</Link>
+          <Link to="/categorias" className="hover:text-[#22c55e] transition-colors">Categorías</Link>
+          <Link to="/info" className="hover:text-[#22c55e] transition-colors">Contacto</Link>
         </nav>
       </header>
 
+      {/* Main Content */}
       <main className="flex-grow p-6 bg-gradient-to-b from-[#1F1D2B] to-[#2D2B3A]">
         {children}
       </main>
 
-      <footer className="bg-[#2D2B3A] text-white py-12 px-6">
-        <div className="max-w-screen-xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {/* Información de contacto */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-xl font-semibold text-[#22c55e]">Información de Contacto</h3>
-            <p className="text-gray-400">ByteCore SRL</p>
-            <p className="text-gray-400">Email: contacto@bytecore.com</p>
-            <p className="text-gray-400">Teléfono: +123 456 7890</p>
-            <p className="text-gray-400">Dirección: Calle Ficticia 123, Ciudad</p>
+      {/* Footer */}
+      <footer className="bg-[#2D2B3A] text-gray-300 py-10 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+
+          {/* Company Info */}
+          <div>
+            <h2 className="text-2xl font-bold text-[#22c55e] mb-4">ByteCore</h2>
+            <p className="text-sm leading-relaxed">
+              ByteCore es tu tienda de tecnología de confianza. Descubre productos de calidad, soporte personalizado y un equipo apasionado por la innovación.
+            </p>
           </div>
 
-          {/* Enlaces rápidos */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-xl font-semibold text-[#22c55e]">Enlaces Rápidos</h3>
-            <Link to="/donaciones" className="text-gray-400 hover:text-[#22c55e]">Productos</Link>
-            <Link to="/info" className="text-gray-400 hover:text-[#22c55e]">Contacto</Link>
-            <Link to="/terms" className="text-gray-400 hover:text-[#22c55e]">Términos y Condiciones</Link>
-            <Link to="/privacy" className="text-gray-400 hover:text-[#22c55e]">Política de Privacidad</Link>
+          {/* Enlaces útiles */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-2">Enlaces útiles</h3>
+            <ul className="space-y-1 text-sm">
+              <li><Link to="/dashboard" className="hover:text-[#22c55e]">Inicio</Link></li>
+              <li><Link to="/categorias" className="hover:text-[#22c55e]">Categorías</Link></li>
+              <li><Link to="/info" className="hover:text-[#22c55e]">Contacto</Link></li>
+              <li><Link to="/terminos" className="hover:text-[#22c55e]">Términos y Condiciones</Link></li>
+              <li><Link to="/privacidad" className="hover:text-[#22c55e]">Política de Privacidad</Link></li>
+            </ul>
           </div>
 
-          {/* Redes Sociales */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-xl font-semibold text-[#22c55e]">Síguenos</h3>
-            <div className="flex gap-4">
-              <a href="https://facebook.com" className="text-gray-400 hover:text-[#22c55e]" title="Facebook">
-                <i className="fab fa-facebook-f"></i> Facebook
-              </a>
-              <a href="https://twitter.com" className="text-gray-400 hover:text-[#22c55e]" title="Twitter">
-                <i className="fab fa-twitter"></i> Twitter
-              </a>
-              <a href="https://instagram.com" className="text-gray-400 hover:text-[#22c55e]" title="Instagram">
-                <i className="fab fa-instagram"></i> Instagram
-              </a>
+          {/* Soporte */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-2">Soporte</h3>
+            <ul className="space-y-1 text-sm">
+              <li><a href="mailto:soporte@bytecore.com" className="hover:text-[#22c55e]">soporte@bytecore.com</a></li>
+              <li><Link to="/devoluciones" className="hover:text-[#22c55e]">Devoluciones</Link></li>
+            </ul>
+          </div>
+
+          {/* Redes sociales */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-2">Síguenos</h3>
+            <div className="flex space-x-4 text-2xl">
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-[#22c55e]"><FiFacebook /></a>
+              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-[#22c55e]"><FiTwitter /></a>
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-[#22c55e]"><FiInstagram /></a>
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-[#22c55e]"><FaLinkedin /></a>
+              <a href="mailto:contacto@bytecore.com" className="hover:text-[#22c55e]"><FiMail /></a>
             </div>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="mt-8 text-center text-gray-400 text-sm">
-          <p>ByteCore SRL Sociedad de Responsabilidad Limitada © 2025</p>
+        <div className="mt-8 border-t border-gray-700 pt-4 text-sm text-center text-gray-500">
+          &copy; {new Date().getFullYear()} ByteCore. Todos los derechos reservados.
         </div>
       </footer>
-
     </div>
   );
-}
+} 

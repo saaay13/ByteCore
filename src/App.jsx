@@ -3,74 +3,41 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Info from "./components/Info";
 import Layout from "./layout/Layout";
-import Registro from "./components/Registro";
 import AgregarProducto from "./components/AgregarProducto";
 import ProductosList from "./components/ProductosList";
 import CategoriaMenu from "./components/CategoriaMenu";
 import ProductosDetalle from "./components/ProductosDetalle";
+import Cuenta from "./components/Cuenta";
+import Pago from "./components/Pago";
+import Carrito from "./components/Carrito";
+import Gracias from "./components/Gracias";
+import ComprasDetalle from "./components/ComprasDetalle";
+import Extra from "./components/Extra";
+
 
 export default function App() {
   return (
     <Routes>
-      {/* Login sin Layout */}
       <Route path="/" element={<Login />} />
-
-      {/* Dashboard con Layout */}
-      <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <Dashboard />
-          </Layout>
-        }
-      />
-
-      {/* Info con Layout */}
-      <Route
-        path="/info"
-        element={
-          <Layout>
-            <Info />
-          </Layout>
-        }
-      />
-
-      {/* Carreras con Categorias */}
+      <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+      <Route path="/info" element={<Layout><Info /></Layout>} />
       <Route path="/categorias" element={<Layout><CategoriaMenu /></Layout>} />
+      <Route path="/productoslist" element={<Layout><ProductosList /></Layout>} />
+      <Route path="/producto/:id" element={<Layout><ProductosDetalle /></Layout>} />
+      <Route path="/agregar" element={<Layout><AgregarProducto /></Layout>} />
+      <Route path="/micuenta" element={<Layout><Cuenta /></Layout>} />
+      <Route path="/gracias" element={<Layout><Gracias /></Layout>} />
+      <Route path="/terminos" element={<Layout><Extra /></Layout>} />
+      <Route path="/privacidad" element={<Layout><Extra /></Layout>} />
+      <Route path="/devoluciones" element={<Layout><Extra /></Layout>} />
+      <Route path="/soporte" element={<Layout><Extra /></Layout>} />
+
+      <Route path="/compras-detalle/:id" element={<Layout><ComprasDetalle /></Layout>} />
+      <Route path="/pago" element={<Layout><Pago /></Layout>} />
+
+      <Route path="/carrito" element={<Layout><Carrito /></Layout>} />
 
 
-      {/* Donaciones con List*/}
-      <Route
-        path="/productoslist"
-        element={
-          <Layout>
-            <ProductosList />
-          </Layout>
-        }
-      />
-      {/* 👇 Detalle de Donación */}
-        <Route
-          path="/producto/:id"
-          element={
-            <Layout>
-              <ProductosDetalle />
-            </Layout>
-          }
-        />
-
-
-      {/* Registro sin Layout */}
-      <Route path="/registro" element={<Registro />} />
-
-      {/* Agregar Producto con Layout */}
-      <Route
-        path="/agregar"
-        element={
-          <Layout>
-            <AgregarProducto />
-          </Layout>
-        }
-      />
     </Routes>
   );
 }

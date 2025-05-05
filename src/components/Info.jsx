@@ -26,7 +26,7 @@ export default function Info() {
         {/* Imagen representativa */}
         <div className="flex justify-center">
           <img
-            src="/img/equipo-bytecore.jpg"
+            src="/img/equipo.webp"
             alt="Equipo ByteCore"
             className="rounded-lg shadow-lg max-w-full w-[500px]"
           />
@@ -51,11 +51,11 @@ export default function Info() {
             </li>
             <li className="flex items-center gap-3">
               <FaWhatsapp className="text-[#22c55e]" />
-              <a href="https://wa.me/51987654321" className="hover:underline">+51 987 654 321</a>
+              <a href="https://wa.me/59112345678" className="hover:underline">+591 12345678</a>
             </li>
             <li className="flex items-center gap-3">
               <FaMapMarkerAlt className="text-[#22c55e]" />
-              Av. Tecnología 123, Lima, Perú
+              Av. Tecnología 123, Tarija, Bolivia
             </li>
             <li className="flex items-center gap-3">
               <FaBuilding className="text-[#22c55e]" />

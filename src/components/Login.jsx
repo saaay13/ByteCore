@@ -15,55 +15,30 @@ export default function Login() {
     setMensaje("");
     setLoading(true);
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({
+    const { data, error: loginError } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
     if (loginError) {
       setLoading(false);
-      setMensaje("❌ Usuario o contraseña incorrectos");
+      setMensaje("❌ " + loginError.message);
       return;
     }
 
     setMensaje("✅ Iniciando sesión...");
-
-    const { data: sessionData } = await supabase.auth.getSession();
-    const userId = sessionData?.session?.user?.id;
-
-    if (userId) {
-      const { data: perfilExistente, error: errorPerfil } = await supabase
-        .from("perfiles")
-        .select("id")
-        .eq("id", userId)
-        .single();
-
-      if (!perfilExistente && !errorPerfil) {
-        const { error: insertError } = await supabase
-          .from("perfiles")
-          .insert({ id: userId, nombre: email });
-
-        if (insertError) {
-          console.error("Error al crear perfil:", insertError.message);
-        }
-      }
-    }
-
-    // ✅ Redirigir inmediatamente
     navigate("/dashboard");
   };
 
   return (
     <div className="min-h-screen bg-[#1F1D2B] flex items-center justify-center px-4">
       <div className="bg-[#2D2B3A] px-10 py-12 rounded-xl shadow-xl w-full max-w-md border border-gray-700">
-        <h1 className="text-3xl font-extrabold text-center text-white mb-8">
-          Bienvenido
-        </h1>
+        <h1 className="text-3xl font-extrabold text-center text-white mb-8">Bienvenido</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-400 font-medium mb-2">Correo</label>
-            <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B] focus-within:ring-2 focus-within:ring-[#22c55e]">
+            <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
               <FiMail className="text-gray-500 mr-2" />
               <input
                 type="email"
@@ -78,7 +53,7 @@ export default function Login() {
 
           <div>
             <label className="block text-gray-400 font-medium mb-2">Contraseña</label>
-            <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B] focus-within:ring-2 focus-within:ring-[#22c55e]">
+            <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
               <FiLock className="text-gray-500 mr-2" />
               <input
                 type="password"

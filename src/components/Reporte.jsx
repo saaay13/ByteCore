@@ -34,13 +34,18 @@ const Reporte = () => {
       reporte += `Método de Pago: ${compra.metodo_pago}\n`;
       reporte += `Total: $${compra.total}\n`;
       reporte += `Fecha: ${new Date(compra.fecha).toLocaleDateString()}\n`;
-      
+
       // Agregar productos y cantidades
-      if (compra.productos && Array.isArray(compra.productos)) {
-        reporte += 'Productos:\n';
-        compra.productos.forEach((producto) => {
-          reporte += ` - ${producto.nombre} (Cantidad: ${producto.cantidad})\n`;
-        });
+      try {
+        const productos = JSON.parse(compra.productos);
+        if (Array.isArray(productos)) {
+          reporte += 'Productos:\n';
+          productos.forEach((producto) => {
+            reporte += ` - ${producto.nombre} (Cantidad: ${producto.cantidad})\n`;
+          });
+        }
+      } catch (e) {
+        console.warn('Error al parsear productos:', compra.productos);
       }
 
       reporte += '\n---\n';
@@ -66,13 +71,18 @@ const Reporte = () => {
     printWindow.document.write('</style></head><body>');
     printWindow.document.write('<h1>Historial de Compras</h1>');
     printWindow.document.write('<table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Total</th><th>Fecha</th><th>Productos</th></tr></thead><tbody>');
-    
+
     historialCompras.forEach((compra) => {
       let productos = '';
-      if (compra.productos && Array.isArray(compra.productos)) {
-        productos = compra.productos.map((producto) => {
-          return `${producto.nombre} (Cantidad: ${producto.cantidad})`;
-        }).join(', ');
+      try {
+        const productosArray = JSON.parse(compra.productos);
+        if (Array.isArray(productosArray)) {
+          productos = productosArray.map((producto) => {
+            return `${producto.nombre} (Cantidad: ${producto.cantidad})`;
+          }).join(', ');
+        }
+      } catch (e) {
+        console.warn('Error al parsear productos:', compra.productos);
       }
 
       printWindow.document.write(`<tr>
@@ -110,10 +120,15 @@ const Reporte = () => {
           <tbody>
             {historialCompras.map((compra) => {
               let productos = '';
-              if (compra.productos && Array.isArray(compra.productos)) {
-                productos = compra.productos.map((producto) => {
-                  return `${producto.nombre} (Cantidad: ${producto.cantidad})`;
-                }).join(', ');
+              try {
+                const productosArray = JSON.parse(compra.productos);
+                if (Array.isArray(productosArray)) {
+                  productos = productosArray.map((producto) => {
+                    return `${producto.nombre} (Cantidad: ${producto.cantidad})`;
+                  }).join(', ');
+                }
+              } catch (e) {
+                console.warn('Error al parsear productos:', compra.productos);
               }
 
               return (

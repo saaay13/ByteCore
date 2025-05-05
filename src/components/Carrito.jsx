@@ -9,59 +9,52 @@ const Carrito = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
+  // Obtener carrito y historial de compras de forma eficiente
   useEffect(() => {
-    // Obtener carrito desde localStorage
-    const fetchCarrito = () => {
+    const fetchData = async () => {
+      // Obtener carrito desde localStorage
       const carritoData = JSON.parse(localStorage.getItem('carrito')) || [];
       setCarrito(carritoData);
+      setTotal(carritoData.reduce((acc, item) => acc + item.precio * item.cantidad, 0));
 
-      let totalCarrito = 0;
-      carritoData.forEach(item => {
-        totalCarrito += item.precio * item.cantidad;
-      });
-      setTotal(totalCarrito);
-    };
+      // Obtener historial de compras desde Supabase
+      const { data, error } = await supabase
+        .from('historial_compras')
+        .select('*')  // Selecciona todos los campos
+        .order('fecha', { ascending: false });  // Ordena los registros por fecha descendente
 
-    // Obtener historial de compras desde Supabase
-    const fetchHistorialCompras = async () => {
-      try {
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-        if (authError || !user) {
-          console.error('Usuario no autenticado');
-          return;
-        }
-
-        // Filtrar historial de compras por user_id
-        const { data, error } = await supabase
-          .from('historial_compras')
-          .select('id, nombre_completo, fecha, total')
-          .eq('user_id', user.id)  // Filtramos por el user_id del usuario logueado
-          .order('fecha', { ascending: false });
-
-        if (error) throw new Error('Error al obtener historial de compras');
+      if (error) {
+        console.error('Error al obtener historial de compras:', error);
+      } else {
         setHistorialCompras(data);
-      } catch (error) {
-        console.error(error);
       }
     };
 
-    fetchCarrito();
-    fetchHistorialCompras();
+    fetchData();
   }, []);
 
+  // Función para recalcular el total del carrito
+  const recalcularTotal = () => {
+    const totalCarrito = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+    setTotal(totalCarrito);
+  };
+
+  // Eliminar producto del carrito
   const eliminarProducto = (id) => {
     const nuevoCarrito = carrito.filter(item => item.id !== id);
     setCarrito(nuevoCarrito);
     localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
-    recalcularTotal(nuevoCarrito);
+    recalcularTotal();
   };
 
-  const recalcularTotal = (carrito) => {
-    let totalCarrito = 0;
-    carrito.forEach(item => {
-      totalCarrito += item.precio * item.cantidad;
-    });
-    setTotal(totalCarrito);
+  // Actualizar la cantidad de un producto
+  const actualizarCantidad = (id, cantidad) => {
+    const nuevoCarrito = carrito.map(item =>
+      item.id === id ? { ...item, cantidad: cantidad } : item
+    );
+    setCarrito(nuevoCarrito);
+    localStorage.setItem('carrito', JSON.stringify(nuevoCarrito));
+    recalcularTotal();
   };
 
   const vaciarCarrito = () => {
@@ -70,8 +63,8 @@ const Carrito = () => {
     localStorage.removeItem('carrito');
   };
 
-  const procesarPago = async () => {
-    navigate('/pago');
+  const procesarPago = () => {
+    navigate('/factura');
   };
 
   return (
@@ -81,10 +74,9 @@ const Carrito = () => {
         className={`fixed left-0 top-0 w-60 bg-gray-800 text-white p-6 h-full transition-all duration-300 transform ${showMenu ? 'translate-x-0' : '-translate-x-64'} shadow-xl`}
       >
         <h2 className="text-2xl font-bold mb-4">Historial de Compras</h2>
-        
         <ul>
           {historialCompras.map((compra) => (
-            <li key={compra.fecha} className="mb-4">
+            <li key={compra.id} className="mb-4">
               <p><strong>{compra.nombre_completo}</strong></p>
               <p>Total: ${compra.total}</p>
               <p>Fecha: {new Date(compra.fecha).toLocaleDateString()}</p>

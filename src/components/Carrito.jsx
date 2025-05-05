@@ -64,7 +64,7 @@ const Carrito = () => {
   };
 
   const procesarPago = () => {
-    navigate('/factura');
+    navigate('/pago');
   };
 
   return (

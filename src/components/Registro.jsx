@@ -1,8 +1,6 @@
-// src/Registro.jsx
 import React, { useState } from 'react';
-import { supabase } from '../supabase';
-import { FiMail, FiLock, FiUser } from 'react-icons/fi'; // Iconos para correo, contraseña y usuario
-import { useNavigate } from 'react-router-dom'; // Hook para la navegación de rutas
+import { FiMail, FiLock, FiUser } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -20,48 +18,17 @@ export default function Registro() {
     setSuccess(null);
     setLoading(true);
 
-    // Paso 1: Crear cuenta en Auth
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (signUpError) {
+    setTimeout(() => {
+      setSuccess('¡Cuenta creada! J');
       setLoading(false);
-      setError(signUpError.message);
-      return;
-    }
-
-    const user = data.user;
-
-    // Paso 2: Guardar en la tabla profiles
-    const { error: insertError } = await supabase
-      .from('perfiles')
-      .insert([
-        {
-          id: user.id,
-          username,
-          full_name: fullName,
-        },
-      ]);
-
-    if (insertError) {
-      setLoading(false);
-      setError(insertError.message);
-    } else {
-      setSuccess('¡Cuenta creada! Revisa tu correo para confirmar.');
-      setLoading(false);
-      navigate('/'); // Redirige al login después de registrar al usuario
-    }
+    }, 1000);
   };
 
   return (
     <div className="min-h-screen bg-[#1F1D2B] flex items-center justify-center px-4">
       <div className="bg-[#2D2B3A] px-10 py-12 rounded-xl shadow-xl w-full max-w-md border border-gray-700">
         <h1 className="text-3xl font-extrabold text-center text-white mb-8">Crear Cuenta</h1>
-
         <form onSubmit={handleRegister} className="space-y-6">
-          {/* Campo de nombre completo */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Nombre completo</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -77,7 +44,6 @@ export default function Registro() {
             </div>
           </div>
 
-          {/* Campo de nombre de usuario */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Nombre de usuario</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -93,7 +59,6 @@ export default function Registro() {
             </div>
           </div>
 
-          {/* Campo de correo */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Correo electrónico</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -109,7 +74,6 @@ export default function Registro() {
             </div>
           </div>
 
-          {/* Campo de contraseña */}
           <div>
             <label className="block text-gray-400 font-medium mb-2">Contraseña</label>
             <div className="flex items-center border border-gray-600 rounded-lg px-3 py-2 bg-[#1F1D2B]">
@@ -125,7 +89,6 @@ export default function Registro() {
             </div>
           </div>
 
-          {/* Botón de submit para registrarse */}
           <button
             type="submit"
             disabled={loading}
@@ -134,7 +97,6 @@ export default function Registro() {
             {loading ? 'Creando cuenta...' : 'Registrarse'}
           </button>
 
-          {/* Renderizado condicional del mensaje de error o éxito */}
           {error && (
             <div className="text-center mt-4 text-sm text-red-500">{error}</div>
           )}
@@ -143,10 +105,9 @@ export default function Registro() {
           )}
         </form>
 
-        {/* Enlace para iniciar sesión */}
         <p className="text-center mt-6 text-sm text-gray-400">
           ¿Ya tienes una cuenta?{' '}
-          <a href="/login" className="text-green-400 hover:underline">
+          <a href="/" className="text-green-400 hover:underline">
             Iniciar sesión
           </a>
         </p>

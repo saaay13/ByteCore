@@ -14,7 +14,7 @@ import Gracias from "./components/Gracias";
 import ComprasDetalle from "./components/ComprasDetalle";
 import Extra from "./components/Extra";
 import Registro from "./components/Registro";
-
+import Reporte from './components/Reporte'; 
 import Factura from "./components/Factura";
 import { useState } from "react"; // Importamos useState para manejar el estado del usuario
 export default function App() {
@@ -32,6 +32,8 @@ export default function App() {
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/info" element={<Layout><Info /></Layout>} />
         <Route path="/factura/:id" element={<Factura />} />
+        <Route path="/reporte" element={<Reporte/>} />
+
         <Route path="/categorias" element={<Layout><CategoriaMenu /></Layout>} />
         <Route path="/productoslist" element={<Layout><ProductosList /></Layout>} />
         <Route path="/producto/:id" element={<Layout><ProductosDetalle /></Layout>} />

@@ -21,6 +21,28 @@ export default function Login() {
       email,
       password
     });
+const { data: sessionData } = await supabase.auth.getSession();
+const userId = sessionData?.session?.user?.id;
+
+if (userId) {
+    const { data: perfilExistente, error: errorPerfil } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle(); // Esto previene errores si no hay ningún perfil
+  
+    if (!perfilExistente && !errorPerfil) {
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert({ id: userId, username: email }); // Puedes cambiar el campo `username`
+  
+      if (insertError) {
+        console.error("Error al crear perfil:", insertError.message);
+      }
+    
+  }
+  
+}
 
     // Renderizado condicional para mostrar el mensaje dependiendo de si hay error o éxito
     if (loginError) {
@@ -78,6 +100,7 @@ export default function Login() {
             <a href="/registro" className="text-green-400 hover:underline">
               Crear cuenta
             </a>
+
           </p>
 
           {/* Botón de submit para iniciar sesión */}

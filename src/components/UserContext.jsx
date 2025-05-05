@@ -1,54 +1,40 @@
-// UserContext.jsx
-import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "../supabase";
+// src/UserContext.jsx
+import { createContext, useContext, useEffect, useState } from 'react'
+import { supabase } from '../supabase'
 
-const UserContext = createContext();
+const UserContext = createContext()
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [perfil, setPerfil] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function UserProvider({ children }) {
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const fetchUserAndProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+    // Obtener el usuario actual al cargar la app
+    const getUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user ?? null)
+    }
 
-      if (session?.user) {
-        setUser(session.user);
+    getUser()
 
-        const { data: perfilData, error } = await supabase
-          .from("perfiles")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
+    // Escuchar cambios de sesión (login, logout, etc.)
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
 
-        if (!error) {
-          setPerfil(perfilData);
-        } else {
-          console.warn("⚠️ No se encontró perfil:", error.message);
-        }
-      }
-
-      setLoading(false);
-    };
-
-    fetchUserAndProfile();
-
-    // Escucha cambios en sesión (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      fetchUserAndProfile();
-    });
-
+    // Limpieza del listener
     return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
+      listener.subscription.unsubscribe()
+    }
+  }, [])
 
   return (
-    <UserContext.Provider value={{ user, perfil, loading }}>
+    <UserContext.Provider value={{ user }}>
       {children}
     </UserContext.Provider>
-  );
-};
+  )
+}
 
-export const useUser = () => useContext(UserContext);
+// Hook personalizado para acceder al contexto
+export function useUser() {
+  return useContext(UserContext)
+}

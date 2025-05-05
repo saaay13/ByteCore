@@ -8,37 +8,67 @@ export default function Dashboard() {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    // Obtener productos de la base de datos
     const fetchProductos = async () => {
       const { data, error } = await supabase.from("productos").select("*");
 
       if (error) {
-        console.error("Error al obtener productos:", error); // Error al obtener productos
+        console.error("Error al obtener productos:", error);
       } else {
-        // Agrupar productos por categoría
         const agrupados = data.reduce((acc, producto) => {
-          const categoria = producto.categoria || "Sin categoría"; // Si no tiene categoría, se asigna "Sin categoría"
-          if (!acc[categoria]) acc[categoria] = []; // Crear arreglo si no existe
-          acc[categoria].push(producto); // Añadir producto a la categoría
+          const categoria = producto.categoria || "Sin categoría";
+          if (!acc[categoria]) acc[categoria] = [];
+          acc[categoria].push(producto);
           return acc;
         }, {});
-        setProductosPorCategoria(agrupados); // Actualizar estado con productos agrupados
+        setProductosPorCategoria(agrupados);
       }
     };
 
-    // Obtener datos del usuario actual
     const getUsuario = async () => {
       const { data, error } = await supabase.auth.getUser();
-      if (!error) setUsuario(data.user); // Guardar datos del usuario en el estado
+      if (!error) setUsuario(data.user);
     };
 
-    fetchProductos(); // Llamar a la función que obtiene los productos
-    getUsuario(); // Llamar a la función que obtiene los datos del usuario
-  }, []); // Efecto solo al montar el componente
+    fetchProductos();
+    getUsuario();
+  }, []);
+
+  const generarReporte = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('historial_compras')
+        .select('id, nombre_completo, telefono, direccion, tipo_entrega, metodo_pago, productos, total, fecha')
+        .order('fecha', { ascending: false });
+
+      if (error) {
+        throw new Error('Error al obtener el historial de compras');
+      }
+
+      let reporte = 'Historial de Compras\n\n';
+      data.forEach((compra) => {
+        reporte += `Nombre: ${compra.nombre_completo}\n`;
+        reporte += `Teléfono: ${compra.telefono}\n`;
+        reporte += `Dirección: ${compra.direccion}\n`;
+        reporte += `Tipo de Entrega: ${compra.tipo_entrega}\n`;
+        reporte += `Método de Pago: ${compra.metodo_pago}\n`;
+        reporte += `Total: $${compra.total}\n`;
+        reporte += `Fecha: ${new Date(compra.fecha).toLocaleDateString()}\n`;
+        reporte += '\n---\n';
+      });
+
+      const blob = new Blob([reporte], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'reporte_historial_compras.txt';
+      link.click();
+    } catch (error) {
+      console.error('Error generando el reporte:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#1F1D2B] text-gray-300 p-6 flex flex-col items-center">
-      {/* Bienvenida: Imagen de fondo y mensaje de bienvenida */}
       <div
         className="relative w-full max-w-5xl rounded-xl overflow-hidden shadow-lg border border-gray-700"
         style={{
@@ -58,19 +88,28 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Botón Agregar Producto: Mostrar solo para un usuario específico */}
       {usuario?.email === "77875506s@gmail.com" && (
-        <div className="mt-8 text-center">
-          <Link
-            to="/agregar"
-            className="inline-block bg-[#22c55e] text-white font-bold py-2 px-6 rounded-full hover:bg-green-600 transition"
-          >
-            Agregar Producto
-          </Link>
-        </div>
+        <>
+          <div className="mt-8 text-center">
+            <Link
+              to="/agregar"
+              className="inline-block bg-[#22c55e] text-white font-bold py-2 px-6 rounded-full hover:bg-green-600 transition"
+            >
+              Agregar Producto
+            </Link>
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              to="/reporte" // Esta es la ruta donde se encuentra el archivo Reporte.jsx
+              className="inline-block bg-yellow-500 text-white font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition"
+            >
+              Generar Reporte
+            </Link>
+          </div>
+        </>
       )}
 
-      {/* Mostrar productos por categoría: Agrupación de productos */}
       <div className="mt-16 w-full px-4 space-y-20">
         {Object.entries(productosPorCategoria).map(([categoria, productos]) => (
           <div key={categoria} className="flex flex-col items-center">

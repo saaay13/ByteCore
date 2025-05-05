@@ -21,14 +21,22 @@ const Carrito = () => {
       });
       setTotal(totalCarrito);
     };
-    
+
     // Obtener historial de compras desde Supabase
     const fetchHistorialCompras = async () => {
       try {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          console.error('Usuario no autenticado');
+          return;
+        }
+
+        // Filtrar historial de compras por user_id
         const { data, error } = await supabase
-        .from('historial_compras')
-        .select('id, nombre_completo, fecha, total')
-        .order('fecha', { ascending: false });
+          .from('historial_compras')
+          .select('id, nombre_completo, fecha, total')
+          .eq('user_id', user.id)  // Filtramos por el user_id del usuario logueado
+          .order('fecha', { ascending: false });
 
         if (error) throw new Error('Error al obtener historial de compras');
         setHistorialCompras(data);

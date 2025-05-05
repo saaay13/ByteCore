@@ -33,7 +33,7 @@ export default function Cuenta() {
 
   const cerrarSesion = async () => {
     await supabase.auth.signOut(); // Cerramos sesión
-    navigate("/login"); // Redirigimos a la página de inicio de sesión
+    navigate("/"); // Redirigimos a la página de inicio de sesión
   };
 
   // Si el perfil aún no se ha cargado, mostramos un mensaje de carga
